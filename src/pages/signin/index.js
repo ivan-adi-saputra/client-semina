@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Card, Container } from "react-bootstrap";
 import SAlert from "../../components/Alert";
 import SForm from "./form";
-import axios from "axios";
-import { useNavigate, Navigate } from "react-router-dom";
-import { config } from "../../config";
+import { postData } from "../../utils/fetchData";
+import { useDispatch } from "react-redux";
+import { userLogin } from "../../redux/auth/actions";
+import { useNavigate } from "react-router-dom";
 
 function Signin() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [form, setForm] = useState({
     email: "",
@@ -29,16 +31,16 @@ function Signin() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const res = await axios.post(`${config.api_host_dev}/cms/auth/signin`, {
-        email: form.email,
-        password: form.password,
-        // form,
-      });
+      const res = await postData({ url: `cms/auth/signin`, payload: form });
 
-      // untuk menyimpan token dalam local storage
-      localStorage.setItem("token", res.data.data.token);
-      setLoading(false);
+      dispatch(
+        userLogin({
+          token: res.data.data.token,
+          role: res.data.data.role,
+        })
+      );
       navigate("/");
+      setLoading(false);
     } catch (error) {
       setLoading(false);
 
@@ -52,8 +54,6 @@ function Signin() {
     }
   };
 
-  const token = localStorage.getItem("token");
-  if (token) return <Navigate to="/" />;
   return (
     <>
       <Container md={12}>
