@@ -27,46 +27,28 @@ function CategoryCreate() {
   };
 
   const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-      const res = await postData("cms/categories", form);
-
-      dispatch(setNotif(true, "success", `berhasil tambah kategori`));
+    setIsLoading(true);
+    const res = await postData("cms/categories", form);
+    if (res?.data?.data) {
+      dispatch(
+        setNotif(
+          true,
+          "success",
+          `berhasil tambah kategori ${res.data.data.name}`
+        )
+      );
       navigate("/categories");
       setIsLoading(false);
-    } catch (error) {
+    } else {
       setIsLoading(false);
       setAlert({
         ...alert,
         status: true,
         type: "danger",
-        message: error?.response?.data?.msg ?? "Internal Server Error",
+        message: res.response.data.msg,
       });
     }
   };
-  // const handleSubmit = async () => {
-  //   setIsLoading(true);
-  //   const res = await postData("cms/categories", form);
-  //   if (res?.data?.data) {
-  //     dispatch(
-  //       setNotif(
-  //         true,
-  //         "success",
-  //         `berhasil tambah kategori ${res.data.data.name}`
-  //       )
-  //     );
-  //     navigate("/categories");
-  //     setIsLoading(false);
-  //   } else {
-  //     setIsLoading(false);
-  //     setAlert({
-  //       ...alert,
-  //       status: true,
-  //       type: "danger",
-  //       message: res.response.data.msg,
-  //     });
-  //   }
-  // };
 
   return (
     <Container>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../config";
+// import handleError from "./handleError";
 
 export async function getData(url, params) {
   try {
@@ -10,12 +11,11 @@ export async function getData(url, params) {
     return await axios.get(`${config.api_host_dev}/${url}`, {
       params,
       headers: {
-        Authorization: `Bearer ${token.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-  } catch (error) {
-    console.log(error);
-    throw error;
+  } catch (err) {
+    return err;
   }
 }
 
@@ -25,20 +25,14 @@ export async function postData(url, payload, formData) {
       ? JSON.parse(localStorage.getItem("auth"))
       : {};
 
-    const response = await axios.post(
-      `${config.api_host_dev}/${url}`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-          "Content-Type": formData ? "multipart/form-data" : "application/json",
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.log(error);
+    return await axios.post(`${config.api_host_dev}/${url}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": formData ? "multipart/form-data" : "application/json",
+      },
+    });
+  } catch (err) {
+    return err;
   }
 }
 
@@ -50,11 +44,11 @@ export async function putData(url, payload) {
 
     return await axios.put(`${config.api_host_dev}/${url}`, payload, {
       headers: {
-        Authorization: `Bearer ${token.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    return err;
   }
 }
 
@@ -66,10 +60,10 @@ export async function deleteData(url) {
 
     return await axios.delete(`${config.api_host_dev}/${url}`, {
       headers: {
-        Authorization: `Bearer ${token.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    return err;
   }
 }

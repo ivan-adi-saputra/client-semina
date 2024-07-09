@@ -13,7 +13,6 @@ import { deleteData } from "../../utils/fetchData";
 import Swal from "sweetalert2";
 
 export default function PageCategories() {
-  // const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -27,12 +26,12 @@ export default function PageCategories() {
   });
 
   const checkAccess = () => {
-    let { token } = localStorage.getItem("auth")
+    let { role } = localStorage.getItem("auth")
       ? JSON.parse(localStorage.getItem("auth"))
       : {};
     const access = { tambah: false, hapus: false, edit: false };
     Object.keys(accessCategories).forEach(function (key, index) {
-      if (accessCategories[key].indexOf(token.role) >= 0) {
+      if (accessCategories[key].indexOf(role) >= 0) {
         access[key] = true;
       }
     });
@@ -60,7 +59,13 @@ export default function PageCategories() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await deleteData(`cms/categories/${id}`);
-        dispatch(setNotif(true, "success", `berhasil hapus kategori`));
+        dispatch(
+          setNotif(
+            true,
+            "success",
+            `berhasil hapus kategori ${res.data.data.name}`
+          )
+        );
         dispatch(fetchCategories());
       }
     });

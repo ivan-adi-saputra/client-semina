@@ -17,11 +17,11 @@ function SNavbar() {
 
   useEffect(() => {
     const fetchData = () => {
-      let { token } = localStorage.getItem("auth")
+      let { role } = localStorage.getItem("auth")
         ? JSON.parse(localStorage.getItem("auth"))
         : {};
 
-      setRole(token.role);
+      setRole(role);
     };
     fetchData();
   }, []);

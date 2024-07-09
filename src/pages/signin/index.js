@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Card, Container } from "react-bootstrap";
 import SAlert from "../../components/Alert";
 import SForm from "./form";
-import { postData } from "../../utils/fetchData";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../../redux/auth/actions";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { config } from "../../config";
 
 function Signin() {
   const navigate = useNavigate();
@@ -31,25 +32,21 @@ function Signin() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const res = await postData({ url: `cms/auth/signin`, payload: form });
 
-      dispatch(
-        userLogin({
-          token: res.data.data.token,
-          role: res.data.data.role,
-        })
+      const res = await axios.post(
+        `${config.api_host_dev}/cms/auth/signin`,
+        form
       );
-      navigate("/");
+
+      dispatch(userLogin(res.data.data.token, res.data.data.role));
       setLoading(false);
+      navigate("/");
     } catch (error) {
       setLoading(false);
-
-      const errorMessage =
-        error?.response?.data?.msg || "Internal Server Error";
       setAlert({
         status: true,
-        variant: "danger",
-        message: errorMessage,
+        message: error?.response?.data?.msg ?? "Internal server error",
+        type: "danger",
       });
     }
   };
