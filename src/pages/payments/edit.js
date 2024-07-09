@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import SBreadcrumb from "../../components/Breadcrumb";
+import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
-import Form from "./form";
-import { postData } from "../../utils/fetchData";
+import SBreadCrumb from "../../components/Breadcrumb";
 import SAlert from "../../components/Alert";
-import { useNavigate } from "react-router-dom";
+import Form from "./form";
+import { getData, postData, putData } from "../../utils/fetchData";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { setNotif } from "../../redux/notif/actions";
 
-function TalentsCreate() {
-  const dispatch = useDispatch();
+function PaymentsEdit() {
+  const { id } = useParams();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
-    name: "",
+    type: "",
     role: "",
     file: "",
     avatar: "",
@@ -27,8 +27,25 @@ function TalentsCreate() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchOnePayments = async () => {
+    const res = await getData(`cms/payments/${id}`);
+    console.log(res);
+    setForm({
+      ...form,
+      type: res.data.data.type,
+      role: res.data.data.role,
+      avatar: res.data.data.image.name,
+      file: res.data.data.image._id,
+    });
+  };
+
+  useEffect(() => {
+    fetchOnePayments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const uploadImage = async (file) => {
-    const formData = new FormData();
+    let formData = new FormData();
     formData.append("avatar", file);
     const res = await postData("cms/images", formData, true);
     return res;
@@ -84,23 +101,23 @@ function TalentsCreate() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+
     const payload = {
       image: form.file,
       role: form.role,
-      name: form.name,
+      type: form.type,
     };
 
-    const res = await postData("cms/talents", payload);
-    if (res?.data?.message) {
+    const res = await putData(`cms/payments/${id}`, payload);
+    if (res.data.data) {
       dispatch(
         setNotif(
           true,
           "success",
-          `berhasil tambah talents ${res.data.message.name}`
+          `berhasil ubah payments ${res.data.data.type}`
         )
       );
-
-      navigate("/talents");
+      navigate("/payments");
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -115,10 +132,10 @@ function TalentsCreate() {
 
   return (
     <Container>
-      <SBreadcrumb
-        textSecond={"Talents"}
-        textThird={"Tambah"}
-        urlSecond={"/talents"}
+      <SBreadCrumb
+        textSecond={"Payments"}
+        urlSecond={"/payments"}
+        textThird="Edit"
       />
       {alert.status && <SAlert type={alert.type} message={alert.message} />}
       <Form
@@ -126,9 +143,10 @@ function TalentsCreate() {
         isLoading={isLoading}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        edit
       />
     </Container>
   );
 }
 
-export default TalentsCreate;
+export default PaymentsEdit;
