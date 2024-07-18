@@ -11,6 +11,9 @@ import CategoriesReducer from "./categories/reducer";
 import NotifReducer from "./notif/reducer";
 import TalentsReducer from "./talents/reducer";
 import PaymentsReducer from "./payments/reducer";
+import eventsReducer from "./events/reducer";
+import listsReducer from "./lists/reducer";
+import OrdersReducer from "./orders/reducer";
 
 const composerEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -20,6 +23,9 @@ const rootReducers = combineReducers({
   notif: NotifReducer,
   talents: TalentsReducer,
   payments: PaymentsReducer,
+  events: eventsReducer,
+  lists: listsReducer,
+  orders: OrdersReducer,
 });
 const store = createStore(
   rootReducers,
