@@ -1,5 +1,5 @@
 import axios from "axios";
-import { config } from "../configs";
+import { config } from "../config";
 
 const handleError = (error) => {
   const originalRequest = error.config;
@@ -20,9 +20,6 @@ const handleError = (error) => {
           })
         );
         originalRequest.headers.Authorization = `Bearer ${res.data.data.token}`;
-
-        console.log("originalRequest");
-        console.log(originalRequest);
 
         return axios(originalRequest);
       })

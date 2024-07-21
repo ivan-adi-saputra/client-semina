@@ -128,7 +128,7 @@ function EventsCreate() {
     };
 
     const res = await postData("cms/events", payload);
-    if (res.data.message) {
+    if (res?.data?.message) {
       dispatch(
         setNotif(
           true,
